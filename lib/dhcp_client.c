@@ -14,7 +14,7 @@ static void add_option(uint8_t *opts, int *idx, uint8_t code, uint8_t len, const
   *idx += len;
 }
 
-void init_request_packet(struct dhcp_packet *pkt, uint8_t *mac, uint32_t xid)
+static void init_request_packet(struct dhcp_packet *pkt, uint8_t *mac, uint32_t xid)
 {
   pkt->op = 1; // request
   pkt->htype = 1;
