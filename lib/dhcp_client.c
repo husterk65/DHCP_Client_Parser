@@ -4,6 +4,7 @@
 #include <sys/ioctl.h>
 #include <net/if.h>
 #include <stdlib.h>
+#include <string.h>
 
 static void add_option(uint8_t *opts, int *idx, uint8_t code, uint8_t len, const void *data)
 {
