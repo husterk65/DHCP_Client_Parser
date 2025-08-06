@@ -14,16 +14,21 @@ static void add_option(uint8_t *opts, int *idx, uint8_t code, uint8_t len, const
   *idx += len;
 }
 
+void init_request_packet(struct dhcp_packet *pkt, uint8_t *mac, uint32_t xid)
+{
+  pkt->op = 1; // request
+  pkt->htype = 1;
+  pkt->hlen = 6;
+  pkt->xid = htonl(xid);
+  pkt->flags = htons(0x8000); // Allow to boardcast instead of unicast due to client still not have it own addr
+  memcpy(pkt->chaddr, mac, 6);
+  pkt->magic_cookie = htonl(DHCP_MAGIC_COOKIE);
+}
+
 int send_discover(int sock, struct sockaddr_in *addr, uint8_t *mac, uint32_t xid)
 {
   struct dhcp_packet pkt = {0};
-  pkt.op = 1; // request
-  pkt.htype = 1;
-  pkt.hlen = 6;
-  pkt.xid = htonl(xid);
-  pkt.flags = htons(0x8000);
-  memcpy(pkt.chaddr, mac, 6);
-  pkt.magic_cookie = htonl(DHCP_MAGIC_COOKIE);
+  init_request_packet(&pkt,mac,xid);
 
   int idx = 0;
   uint8_t type = DHCPDISCOVER;
@@ -37,13 +42,7 @@ int send_request(int sock, struct sockaddr_in *addr, uint8_t *mac, uint32_t xid,
                  uint32_t server_ip, uint32_t offered_ip)
 {
   struct dhcp_packet pkt = {0};
-  pkt.op = 1;
-  pkt.htype = 1;
-  pkt.hlen = 6;
-  pkt.xid = htonl(xid);
-  pkt.flags = htons(0x8000);
-  memcpy(pkt.chaddr, mac, 6);
-  pkt.magic_cookie = htonl(DHCP_MAGIC_COOKIE);
+  init_request_packet(&pkt,mac,xid);
 
   int idx = 0;
   uint8_t type = DHCPREQUEST;
